@@ -14,9 +14,12 @@ $(document).ready(function () {
   }
 
   function fetchHotelData(city) {
-    const apikey = "658488637be28bc48544c9d8";
+    const apikey = "twDXV5OQpLJEnbHYTOvNFPy2KdwAt3zj";
     const QueryURL2 =
-      "https://api.makcorps.com/mapping?api_key=" + apikey + "&name=" + city;
+      "https://app.ticketmaster.com/discovery/v2/&apikey=" +
+      apikey +
+      "&city=" +
+      city;
 
     fetch(QueryURL2)
       .then(function (response) {
