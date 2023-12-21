@@ -109,8 +109,6 @@ $(document).ready(function() {
         const currentWeather = data.list[0];
         const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
         const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
-        const currentWindSpeed = currentWeather.wind.speed;
-        const currentHumidity = currentWeather.main.humidity;
         const currentWeatherIcon = currentWeather.weather[0].icon;
       
         const currentWeatherCardTitle = $(' <h2 class="cityName">' + currentCity + '</h2>')
@@ -121,8 +119,6 @@ $(document).ready(function() {
           <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
           <p>Temperature: ${currentTemperature}°C</p>
           <p>Weather: ${currentWeatherDesc}</p>
-          <p>Wind Speed: ${currentWindSpeed} m/s</p>
-          <p>Humidity: ${currentHumidity}%</p>
         `);
       
         forecastContainer.append(currentWeatherCardTitle);
@@ -139,8 +135,6 @@ $(document).ready(function() {
           const date = day.dt_txt.split(' ')[0];
           const temperature = (day.main.temp - 273.15).toFixed(2);
           const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-          const windSpeed = day.wind.speed;
-          const humidity = day.main.humidity;
           const weatherIcon = day.weather[0].icon;
       
           const forecastCard = $('<div class="weather-card five-day-weather-card"></div>');
@@ -149,8 +143,6 @@ $(document).ready(function() {
             <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
             <p>Temperature: ${temperature}°C</p>
             <p>Weather: ${weatherDesc}</p>
-            <p>Wind Speed: ${windSpeed} m/s</p>
-            <p>Humidity: ${humidity}%</p>
           `);
       
           forecastContainer.append(forecastCard);
