@@ -149,14 +149,26 @@ $(document).ready(function () {
       const currentWeatherCardTitle = $(' <h2 class="cityName">' + currentCity + '</h2>')
       const currentWeatherCard = $('<div class="weather-card current-weather"></div>');
       currentWeatherCard.html(`
+        $('.city-name').text(data.city.name);
+      
+        const forecastContainer = $('#forecast');
+        forecastContainer.empty();
+        console.log(data);
+        const currentCity = data.city.name
+        const currentWeather = data.list[0];
+        const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
+        const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
+        const currentWeatherIcon = currentWeather.weather[0].icon;
+      
+        const currentWeatherCardTitle = $(' <h2 class="cityName">' + currentCity + '</h2>')
+        const currentWeatherCard = $('<div class="weather-card current-weather"></div>');
+        currentWeatherCard.html(`
        
           <h3>Current Weather</h3>
           <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
           <p>Temperature: ${currentTemperature}°C</p>
-          <p>Weather: ${currentWeatherDesc}</p>
-          <p>Wind Speed: ${currentWindSpeed} m/s</p>
-          <p>Humidity: ${currentHumidity}%</p>
-        `);
+          <p>Weather: ${currentWeatherDesc}</p>;
+        );
 
       forecastContainer.append(currentWeatherCardTitle);
       forecastContainer.append(currentWeatherCard);
@@ -178,12 +190,29 @@ $(document).ready(function () {
 
         const forecastCard = $('<div class="weather-card five-day-weather-card"></div>');
         forecastCard.html(`
+      
+        forecastContainer.append(currentWeatherCardTitle);
+        forecastContainer.append(currentWeatherCard);
+        
+        const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + currentCity +'</h2>')
+        forecastContainer.append(forecastContainerTitle);
+        const forecastDays = data.list.filter(day => {
+          const time = day.dt_txt.split(' ')[1];
+          return time === '12:00:00';
+        }).slice(0, 5);
+      
+        forecastDays.forEach(day => {
+          const date = day.dt_txt.split(' ')[0];
+          const temperature = (day.main.temp - 273.15).toFixed(2);
+          const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+          const weatherIcon = day.weather[0].icon;
+      
+          const forecastCard = $('<div class="weather-card five-day-weather-card"></div>');
+          forecastCard.html(`
             <h3> ${date}</h3>
             <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
             <p>Temperature: ${temperature}°C</p>
             <p>Weather: ${weatherDesc}</p>
-            <p>Wind Speed: ${windSpeed} m/s</p>
-            <p>Humidity: ${humidity}%</p>
           `);
 
         forecastContainer.append(forecastCard);
