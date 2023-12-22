@@ -1,0 +1,100 @@
+
+
+.row {
+   
+}
+
+
+
+.img {
+
+    display: inline-block;
+}
+
+.card-deck {
+
+   
+}
+
+.col-md-2{
+
+    border-radius: 15%
+    border-width: 3px;
+    border-color: blue;
+    text-align: left;
+    padding: 0px;
+   
+    
+}
+
+
+.card.text-center {
+  
+    border-color: rgb(36, 39, 216);
+    border-width: 3px;
+
+}
+
+h7 {
+    text-align: left;
+}
+
+
+img {
+    max-width: 50%;
+    display: inline-block;
+    align-items: center;
+}
+
+button {
+   background-color: blue;
+
+   color: aliceblue;
+   border-radius: 5%;
+  
+   display: list-item;
+   width: 100%;
+  
+}
+
+.weather-search {
+    width: 100%;
+    
+
+}
+
+.input-group-append {
+
+    background-color: rgb(101, 105, 228);
+    width: 100%;
+   
+    align-items: center;
+
+}
+
+.card-header {
+    background-image: url(../images/Cloud\ texture\ small.png);
+    background-repeat: repeat;
+    background-size: 100%;
+
+}
+
+.weather-header {
+
+    background: radial-gradient(circle, rgb(255, 255, 255), rgb(0, 80, 210));
+}
+
+body {
+
+    color: blue;
+   
+    background-image: url(../images/cloudbk-seamless.jpg);
+    background-repeat:repeat;
+    background-size: 99.99%;
+}
+
+
+
+h1, h2, h5, h6 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}

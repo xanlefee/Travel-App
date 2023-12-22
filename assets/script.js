@@ -1,199 +1,320 @@
-$(document).ready(function () {
-  let history = [];
-  const city = $("#search-input").val().trim();
 
-  function fetchWeatherData(city) {
-    const apikey = "1182b819fb971825022b5fab780f5857";
-    const queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(
-      city
-    )},uk&appid=${apikey}`;
+const apiKey = "947c7ef8f4775424300be7866e5163a0";
 
-    fetch(queryURL)
-      .then((response) => response.json())
-      .then((data) => processWeatherData(data))
-      .catch((error) => displayErrorMessage(error));
-  }
+const apiKey2 = "8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy";
 
-  function fetchHotelData() {
+//let City = "london";
+
+//weatherArray = [];
 
 
-    
-    const apikey = "8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy";
-    const QueryURL2 =
-    "https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=" + apikey + "&city=" + city + "&locale=en-GB"
 
-      // https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?apikey=8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy
+
+
+// 5 days variable let Monday =
+
+function renderButtons() {
+
+    let citydata = [""];
+
+citydata = JSON.parse(localStorage.getItem("City")) || [];
+console.log(citydata);
+
+   $("#buttons-view").empty();
+
+    for (var i = 0; i < citydata.length; i++) {
+
+        var btncity = $("<button>");
+
+        btncity.addClass("City");
+
+        btncity.attr("data-name", citydata[i]);
+
+        btncity.text(citydata[i]);
+
+        $("#buttons-view").append(btncity);
+
+    }
+}
+
+
+
+const buttonSub = $("#search-form");
+
+
+
+
+
+
+buttonSub.on('click', 'button', function (event) {
+
+    event.preventDefault();
+
+
+
+    let City = $("#search-input").val();
+
+
+    const QueryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + City + "&appid=" + apiKey;
+
+    const QueryURL2 = "https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=" + apiKey2 + "&city=" + City + "&locale=en-GB";
+
+
+    // do we need to push all the data points into the array then stringify and add to local storage? then parse?
+  
+
+   
+
+   weatherArray = JSON.parse(localStorage.getItem("City")) || [];
+
+   weatherArray.push(City);
+
+
+    localStorage.setItem("City", JSON.stringify(weatherArray));
+
+
+    renderButtons();
+
 
     fetch(QueryURL2)
-      .then(function (response) {
+    .then(function (response) {
+
         return response.json();
-      })
-      .then(function (data) {
+    }) 
+    .then(function (data) {
         console.log(data);
-        //
-      });
-  }
 
-  
+        for (let index = 0; index < data.length; index++) {
 
-  function hotelLoop(fetchHotelData) {
-    for (let index = 0; index < data.length; index++) {
-      if (data[index].details.parent_name === city) {
-        console.log(data[index].details.parent_name);
-      }
-    }
-  }
+            if (data[index].details.parent_name === City) {
+                console.log(data[index].details.parent_name);
+            }
+           
+            
+        }
 
-  fetchHotelData();
-  hotelLoop;
-  function handleFormSubmit(event) {
-    event.preventDefault();
-    //const city = $("#search-input").val().trim();
+       //
 
-    if (city !== "") {
-      const storedCity = capitalizeFirstLetter(city);
+    });
 
-      if (!history.includes(storedCity)) {
-        // If city not present in history
-        createHistoryButton(storedCity); // Create button
-      }
 
-      fetchWeatherData(storedCity);
-      fetchHotelData;
-      $("#search-input").val("");
-    }
-  }
 
-  function createHistoryButton(city) {
-    const button = $('<button type="button">' + city + "</button>");
-    button.addClass("history-button");
-    button.data("city", city);
 
-    const historyList = $("#history");
-    historyList.append(button);
 
-    history.push(city);
-  }
+    fetch(QueryURL)
+        .then(function (response) {
 
-  function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
-
-  function displayErrorMessage(error) {
-    $("#error-message").text(`An error occurred: ${error}`);
-  }
-
-  function processWeatherData(data) {
-    displayWeatherData(data);
-  }
-
-  const searchButton = $(
-    '<button type="submit" class="search-button btn btn-primary">Search</button>'
-  );
-  const clearButton = $(
-    '<button class="clear-button btn btn-danger">Clear History</button>'
-  );
-
-  $("#search-form").append(searchButton, clearButton);
-
-  $("#search-form").on("submit", handleFormSubmit);
-  clearButton.on("click", function () {
-    $(".history-button").remove();
-    history = [];
-
-    const forecastContainer = $("#forecast");
-    forecastContainer.empty();
-  });
-
-  function handleFormSubmit(event) {
-    event.preventDefault();
-    const city = $("#search-input").val().trim();
-
-    if (city !== "") {
-      const storedCity = capitalizeFirstLetter(city);
-
-      $(".history-button")
-        .filter(function () {
-          return $(this).data("city") === storedCity;
+            return response.json();
         })
-        .each(function () {
-          const existingButton = $(this);
-          const existingCity = existingButton.text();
+        .then(function (data) {
 
-          if (existingCity === city) {
-            // Existing button for the city exists, don't create a new one
-            existingButton.remove();
-          }
-        });
 
-      if (
-        !history.includes(storedCity) &&
-        !$('#search-form button[data-city="' + city + '"]').length
-      ) {
-        createHistoryButton(storedCity);
-      }
+            console.log(JSON.stringify(data, null, 2));
+            console.log(data);
+            console.log(weatherArray);
+            let Today = dayjs().format("DD/MM/YYYY");
 
-      fetchWeatherData(storedCity);
-      $("#search-input").val("");
-    }
-  }
+            let CityContent1 = $('.weather-points-temp');
+            let CityContent2 = $('.weather-points-wind');
+            let CityContent3 = $('.weather-points-humidity');
+            let weatherPic = $('.weather-pic');
 
-  function displayWeatherData(data) {
-      $('.city-name').text(data.city.name);
-    
-      const forecastContainer = $('#forecast');
-      forecastContainer.empty();
-      console.log(data);
-      const currentCity = data.city.name
-      const currentWeather = data.list[0];
-      const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
-      const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
-  
-      const currentWeatherIcon = currentWeather.weather[0].icon;
-    
-      const currentWeatherCardTitle = $(' <h2 class="cityName">' + currentCity + '</h2>')
-      const currentWeatherCard = $('<div class="weather-card current-weather"></div>');
-      currentWeatherCard.html(`
-     
-        <h3>Current Weather</h3>
-        <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
-        <p>Temperature: ${currentTemperature}°C</p>
-        <p>Weather: ${currentWeatherDesc}</p>
-        
-      `);
-    
-      forecastContainer.append(currentWeatherCardTitle);
-      forecastContainer.append(currentWeatherCard);
-      
-      const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + currentCity +'</h2>')
-      forecastContainer.append(forecastContainerTitle);
-      const forecastDays = data.list.filter(day => {
-        const time = day.dt_txt.split(' ')[1];
-        return time === '12:00:00';
-      }).slice(0, 5);
-    
-      forecastDays.forEach(day => {
-        const date = day.dt_txt.split(' ')[0];
-        const temperature = (day.main.temp - 273.15).toFixed(2);
-        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-        const weatherIcon = day.weather[0].icon;
-    
-        const forecastCard = $('<div class="weather-card five-day-weather-card"></div>');
-        forecastCard.html(`
-          <h3> ${date}</h3>
-          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
-          <p>Temperature: ${temperature}°C</p>
-          <p>Weather: ${weatherDesc}</p>
-        `);
 
-      forecastContainer.append(forecastCard);
-    });
+            // .attr("src","second.jpg")
 
-    $("#history").on("click", ".history-button", function () {
-      // 'this' keyword refers to the current element that's clicked
-      let city = $(this).data("city");
+            let CityTemp = data.list[0].main.temp - 273.15;
+            let CityWind = data.list[0].wind.speed;
+            let Humidity = data.list[0].main.humidity;
+            let WeatherDate = data.list[0].dt_txt;
+            let WeatherDateTrim = dayjs(WeatherDate).format("DD/MM/YYYY");
+            let weatherIcon = "https://openweathermap.org/img/w/" + data.list[0].weather[0].icon + ".png";
+            weatherPic.attr("src", weatherIcon);
 
-      fetchWeatherData(city);
-    });
-  }
+            CityContent1.text("Temp: " + Math.round(CityTemp * 100) / 100 + " °C");
+            CityContent2.text("Wind: " + CityWind + " KPH");
+            CityContent3.text("Humidity: " + Humidity + " %");
+
+            console.log(CityTemp);
+            console.log(CityWind);
+            console.log(Humidity);
+            console.log(WeatherDate);
+            console.log(WeatherDateTrim);
+
+            let weatherList = data.list;
+            //weatherList.concat(data.list);
+            let weatherList2 = Array.from(weatherList);
+            console.log(weatherList2);
+
+
+
+            let cityTitle = $('.city-name');
+            cityTitle.text(data.city.name + " (" + Today + ")");
+
+            // let cardTitles = $('car')
+
+
+
+            for (let i = 0; i < weatherList2.length; i++) {
+
+            
+                    $('.card-title-' + [i]).text(dayjs(weatherList2[i*7].dt_txt).format("DD/MM/YY"));
+                    $('.temp-' + [i]).text("Temp: " + Math.round((weatherList2[i*7].main.temp - 273.15) * 100) / 100 + "°C");
+                    $('.wind-' + [i]).text("Wind: " + weatherList2[i*7].wind.speed + " KPH");
+                    $('.humidity-' + [i]).text("Humidity: " + weatherList2[i*7].main.humidity + "%");
+                    $('.weather-pic-' + [i]).attr("src", "https://openweathermap.org/img/w/" + weatherList2[i].weather[0].icon + ".png");
+
+                }
+
+            }
+        )
+
+
+
+
 });
+
+renderButtons();
+
+const btnContainer = $('#buttons-view');
+
+btnContainer.on('click', 'button', function () {
+
+    let CityChoice = $(this).text();
+    console.log(CityChoice);
+    const QueryURL2 = "https://api.openweathermap.org/data/2.5/forecast?q=" + CityChoice + "&appid=" + apiKey
+
+
+
+    fetch(QueryURL2)
+        .then(function (response) {
+
+            return response.json();
+        })
+        .then(function (data) {
+
+
+            console.log(JSON.stringify(data, null, 2));
+            console.log(data);
+            
+            let Today = dayjs().format("DD/MM/YYYY");
+
+            let CityContent1 = $('.weather-points-temp');
+            let CityContent2 = $('.weather-points-wind');
+            let CityContent3 = $('.weather-points-humidity');
+            let weatherPic = $('.weather-pic');
+
+
+            // .attr("src","second.jpg")
+
+            let CityTemp = data.list[0].main.temp - 273.15;
+            let CityWind = data.list[0].wind.speed;
+            let Humidity = data.list[0].main.humidity;
+            let WeatherDate = data.list[0].dt_txt;
+            let WeatherDateTrim = dayjs(WeatherDate).format("DD/MM/YYYY");
+            let weatherIcon = "https://openweathermap.org/img/w/" + data.list[0].weather[0].icon + ".png";
+            weatherPic.attr("src", weatherIcon);
+
+            CityContent1.text("Temp: " + Math.round(CityTemp * 100) / 100 + " °C");
+            CityContent2.text("Wind: " + CityWind + " KPH");
+            CityContent3.text("Humidity: " + Humidity + " %");
+
+            console.log(CityTemp);
+            console.log(CityWind);
+            console.log(Humidity);
+            console.log(WeatherDate);
+            console.log(WeatherDateTrim);
+
+            let weatherList = data.list;
+            //weatherList.concat(data.list);
+            let weatherList2 = Array.from(weatherList);
+            console.log(weatherList2);
+
+
+
+            let cityTitle = $('.city-name');
+            cityTitle.text(data.city.name + " (" + Today + ")");
+
+            // let cardTitles = $('car')
+
+            for (i = 0; i < weatherList2.length; i++) {
+
+                $('.card-title-' + [i]).text(dayjs(weatherList2[i * 7].dt_txt).format("DD/MM/YY"));
+                $('.temp-' + [i]).text("Temp: " + Math.round((weatherList2[i * 7].main.temp - 273.15) * 100) / 100 + "°C");
+                $('.wind-' + [i]).text("Wind: " + weatherList2[i * 7].wind.speed + " KPH");
+                $('.humidity-' + [i]).text("Humidity: " + weatherList2[i * 7].main.humidity + "%");
+                $('.weather-pic-' + [i]).attr("src", "https://openweathermap.org/img/w/" + weatherList2[i * 7].weather[0].icon + ".png")
+
+
+            }
+
+
+
+
+
+
+
+
+
+        })
+
+
+
+
+});
+
+
+JSON.parse(localStorage.getItem("City")) || [];
+
+//localStorage.clear();
+
+
+/*To do:
+
+1. When user searches for a city in the input, call weather API and show the result in HTML
+
+a- add event listener to form submit yup
+b)get the user input value (make it into variable(local storage) yup
+c) build query URL based on user input value yup
+d) call the API (inside event listener) and render the result in html yup
+-get city name and show it in main weather forecast card yup
+-get the first weather forecast item [0] and get the following values:
+.date
+.temperature
+.wind speed
+.humidity
+.icon
+yup
+
+>render these values to the main card in html .attr()
+
+loop through weather array and and get the values again:
+.date
+.temperature
+.wind speed
+.humidity
+.icon
+
+
+-render those values to the smaller card-
+yup
+
+
+
+2. When user searches for a city, store it in local storage.
+(add to an array, styringify and display. use pop/push/shift/unshift to keep them at 5)
+
+3. On initial page load, load the search history and show it as a list in HTML
+
+- build the API query URL based on the history stored in local storage
+call the API and render the result in the HTML
+
+
+4. When user clicks on the search history, Call weather API and show the 
+result in the HTML
+
+fetch.(QueryURL)
+
+ICON
+https://openweathermap.org/img/w/" + weather[0].icon + ".png"
+
+*/
