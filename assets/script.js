@@ -1,5 +1,6 @@
 $(document).ready(function () {
   let history = [];
+  const city = $("#search-input").val().trim();
 
   function fetchWeatherData(city) {
     const apikey = "1182b819fb971825022b5fab780f5857";
@@ -13,13 +14,15 @@ $(document).ready(function () {
       .catch((error) => displayErrorMessage(error));
   }
 
-  function fetchHotelData(city) {
-    const apikey = "twDXV5OQpLJEnbHYTOvNFPy2KdwAt3zj";
+  function fetchHotelData() {
+
+
+    
+    const apikey = "8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy";
     const QueryURL2 =
-      "https://app.ticketmaster.com/discovery/v2/&apikey=" +
-      apikey +
-      "&city=" +
-      city;
+    "https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=" + apikey + "&city=" + city + "&locale=en-GB"
+
+      // https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?apikey=8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy
 
     fetch(QueryURL2)
       .then(function (response) {
@@ -30,6 +33,8 @@ $(document).ready(function () {
         //
       });
   }
+
+  
 
   function hotelLoop(fetchHotelData) {
     for (let index = 0; index < data.length; index++) {
@@ -43,7 +48,7 @@ $(document).ready(function () {
   hotelLoop;
   function handleFormSubmit(event) {
     event.preventDefault();
-    const city = $("#search-input").val().trim();
+    //const city = $("#search-input").val().trim();
 
     if (city !== "") {
       const storedCity = capitalizeFirstLetter(city);
