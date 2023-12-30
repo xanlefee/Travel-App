@@ -73,7 +73,7 @@ button {
 }
 
 .card-header {
-    background-image: url(../images/Cloud\ texture\ small.png);
+    
     background-repeat: repeat;
     background-size: 100%;
 
@@ -88,7 +88,7 @@ body {
 
     color: blue;
    
-    background-image: url(../images/cloudbk-seamless.jpg);
+    
     background-repeat:repeat;
     background-size: 99.99%;
 }
