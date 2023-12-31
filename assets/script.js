@@ -1,474 +1,156 @@
-
+// Define the API keys
 const apiKey = "947c7ef8f4775424300be7866e5163a0";
-
 const apiKey2 = "8S0LAjCe1DJJvedyTZ8puLytZGAPDGGy";
 
-//let City = "london";
+// Function to render buttons for each city stored in local storage
+const renderButtons = function() {
+  const cityData = JSON.parse(localStorage.getItem("City")) || [];
+  $("#buttons-view").empty();
 
-//weatherArray = [];
+  cityData.forEach(city => {
+    // Creates a new button for each city
+    const btnCity = $("<button>")
+      .addClass("City")
+      .attr("data-name", city)
+      .text(city.charAt(0).toUpperCase() + city.slice(1));
 
-
-
-
-
-// 5 days variable let Monday =
-
-function renderButtons() {
-
-    let citydata = [""];
-
-citydata = JSON.parse(localStorage.getItem("City")) || [];
-console.log(citydata);
-
-   $("#buttons-view").empty();
-
-    for (var i = 0; i < citydata.length; i++) {
-
-        var btncity = $("<button>");
-
-        btncity.addClass("City");
-
-        btncity.attr("data-name", citydata[i]);
-
-        btncity.text(citydata[i]);
-
-        $("#buttons-view").append(btncity);
-
-    }
+    $("#buttons-view").append(btnCity);
+  });
 }
 
+// Function to capitalize first letter of a string (used for Weather descriptions)
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
+// Function to create multiple event cards using data fetched from the API
+function generateEventCards(events) {
+  let eventHTML = events.map((event, i) => {
+    return `
+      <div class="card">
+        <h3 class="event-name-${i}">${event.name}</h3>
+        <p class="event-date-${i}">${event.dates.start.localDate}</p>
+        <p class="event-time-${i}">${event.dates.start.localTime}</p>
+        <a class="event-url-${i}" href="${event.url}">Event Link</a>
+        <img class="event-pic-${i}" src="${event.images[0]?.url}" alt="Event Image">
+      </div>`;
+  }).join("");
+  return eventHTML;
+}
 
-const buttonSub = $("#search-form");
+// Event listener that triggers when the Search button is clicked
+$("#search-button").click(function(event) {
+  event.preventDefault();
 
-
-
-
-
-
-buttonSub.on('click', 'button', function (event) {
-
-    event.preventDefault();
-
-
-
-    let City = $("#search-input").val();
-
-
-    const QueryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + City + "&appid=" + apiKey;
-
-    const QueryURL2 = "https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=" + apiKey2 + "&city=" + City + "&locale=en-GB";
-
-
-    // do we need to push all the data points into the array then stringify and add to local storage? then parse?
+  // Gets the city name from the input field
+  const city = $("#search-input").val();
   
+  const eventsQueryURL = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=${apiKey2}&city=${city}&locale=en-GB`;
+  const weatherQueryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`;
 
-   
+  let cityWeatherArray = JSON.parse(localStorage.getItem("City")) || [];
 
-   weatherArray = JSON.parse(localStorage.getItem("City")) || [];
-
-   weatherArray.push(City);
-
-
-    localStorage.setItem("City", JSON.stringify(weatherArray));
-
-
+  // If the city name doesn't already exist in the array, add it, then render the new set of buttons
+  if (!cityWeatherArray.includes(city)) { 
+    cityWeatherArray.push(city);
+    localStorage.setItem("City", JSON.stringify(cityWeatherArray));
     renderButtons();
+    $("#search-input").val('');
+  }
 
-    //this is the second API URL
+  // Fetch event data from the API
+  fetch(eventsQueryURL)
+    .then(response => response.json())
+    .then(data => {
+      $("#event").empty(); 
+      if (data._embedded && Array.isArray(data._embedded.events)) {
+        $("#event").append(generateEventCards(data._embedded.events));
+      } else {
+        $("#event").append("<p>No Events Found</p>");
+      }
+    })
+    .catch(error => console.error('Error:', error));
 
+  // Fetch weather data from the API
+  fetch(weatherQueryURL)
+    .then(response => response.json())
+    .then(data => {
+      const currentWeather = data.list[0];
+      const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
+      const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
+      const currentWindSpeed = currentWeather.wind.speed;
+      const currentHumidity = currentWeather.main.humidity;
+      const currentWeatherIcon = currentWeather.weather[0].icon;
 
-    fetch(QueryURL2)
-    .then(function (response) {
+      const weatherHTML = `
+        <div class="weather-card current-weather">
+          <h3>Current Weather for ${city}</h3>
+          <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
+          <p>Temperature: ${currentTemperature}°C</p>
+          <p>Weather: ${currentWeatherDesc}</p>
+          <p>Wind Speed: ${currentWindSpeed} m/s</p>
+          <p>Humidity: ${currentHumidity}%</p>
+        </div>`;
 
-        return response.json();
-    }) 
-    .then(function (data) {
-        console.log(data);
-        console.log(data._embedded.events[0].name);
-        console.log(data._embedded.events[0].type);
-       console.log(data._embedded.events[0].dates.start.localDate);
-       console.log(data._embedded.events[0].dates.start.localTime);
-       console.log(data._embedded.events[0].url);
-
-
-       // data to be displayed in cards
-
-       let eventName1 = data._embedded.events[0].name;
-       let eventDate1 = data._embedded.events[0].dates.start.localDate;
-       let eventTime1 = data._embedded.events[0].dates.start.localTime;
-       let eventURL1 = data._embedded.events[0].url;
-       let eventPic1 = data._embedded.events[0].images[0].url;
-      
-       let eventNameL = $('.city-event-name');
-       let eventDateL = $('.city-event-date');
-       let eventTimeL = $('.city-event-time');
-       let eventurlL = $('.city-event-url');
-       let eventPicL = $('.event-pic');
-
-       eventNameL.text("Event: " + eventName1);
-       eventDateL.text("Date: " + eventDate1);
-       eventTimeL.text("Time: " + eventTime1);
-       eventurlL.attr("href", eventURL1 );
-       eventPicL.attr("src", eventPic1);
-
-
-
-      // smaller cards now
-
-      for (let i = 0; i < 6; i++) {
-
-            
-      //  $('.card-title-' + [i]).text(dayjs(weatherList2[i*7].dt_txt).format("DD/MM/YY"));
-        $('.event-name-' + [i]).text("Event: " + data._embedded.events[i].name);
-        $('.event-date-' + [i]).text("Date: " + data._embedded.events[i].dates.start.localDate);
-        $('.event-time-' + [i]).text("Time: " + data._embedded.events[i].dates.start.localTime);
-        $('.event-url-' + [i]).attr("href", data._embedded.events[i].url);
-        $('.event-pic-' + [i]).attr("src", data._embedded.events[i].images[i].url);
-
-    }
-
-
-
-
-     
-
-       //
-
-    });
-
-
-
-
-
-    fetch(QueryURL)
-        .then(function (response) {
-
-            return response.json();
-        })
-        .then(function (data) {
-
-
-            //console.log(JSON.stringify(data, null, 2));
-           // console.log(data);
-           // console.log(weatherArray);
-            let Today = dayjs().format("DD/MM/YYYY");
-
-            let CityContent1 = $('.weather-points-temp');
-            let CityContent2 = $('.weather-points-wind');
-            let CityContent3 = $('.weather-points-humidity');
-            let weatherPic = $('.weather-pic');
-
-
-            // .attr("src","second.jpg")
-
-            
-
-            let CityTemp = data.list[0].main.temp - 273.15;
-            let CityWind = data.list[0].wind.speed;
-            let Humidity = data.list[0].main.humidity;
-            let WeatherDate = data.list[0].dt_txt;
-            let WeatherDateTrim = dayjs(WeatherDate).format("DD/MM/YYYY");
-            let weatherIcon = "https://openweathermap.org/img/w/" + data.list[0].weather[0].icon + ".png";
-            weatherPic.attr("src", weatherIcon);
-
-            CityContent1.text("Temp: " + Math.round(CityTemp * 100) / 100 + " °C");
-            CityContent2.text("Wind: " + CityWind + " KPH");
-            CityContent3.text("Humidity: " + Humidity + " %");
-
-            console.log(CityTemp);
-            console.log(CityWind);
-            console.log(Humidity);
-            console.log(WeatherDate);
-            console.log(WeatherDateTrim);
-
-            
-
-            let weatherList = data.list;
-            //weatherList.concat(data.list);
-            let weatherList2 = Array.from(weatherList);
-            console.log(weatherList2);
-
-
-
-            let cityTitle = $('.city-name');
-            cityTitle.text(data.city.name + " (" + Today + ")");
-
-            // let cardTitles = $('car')
-
-
-
-            for (let i = 0; i < weatherList2.length; i++) {
-
-            
-                   // $('.card-title-' + [i]).text(dayjs(weatherList2[i*7].dt_txt).format("DD/MM/YY"));
-                    $('.temp-' + [i]).text("Temp: " + Math.round((weatherList2[i*7].main.temp - 273.15) * 100) / 100 + "°C");
-                    $('.wind-' + [i]).text("Wind: " + weatherList2[i*7].wind.speed + " KPH");
-                    $('.humidity-' + [i]).text("Humidity: " + weatherList2[i*7].main.humidity + "%");
-                    $('.weather-pic-' + [i]).attr("src", "https://openweathermap.org/img/w/" + weatherList2[i].weather[0].icon + ".png");
-
-                }
-
-            }
-        )
-
-
-
-
+      $('#weather').empty().append(weatherHTML);
+    })
+    .catch(error => console.error('Error:', error));
 });
 
-renderButtons();
+// Event listener that clears the local storage and empty the button view when "Clear History" is clicked
+$("#clear-history").click(function(){
+  localStorage.clear();
+  $("#buttons-view").empty();
+});
 
-const btnContainer = $('#buttons-view');
+// Event listener that, when a city button is clicked, fetches and displays the weather and event data for that city
+$('#buttons-view').on('click', 'button', function () {
+  const cityChoice = $(this).attr("data-name");
+  
+  const eventsQueryURL = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=${apiKey2}&city=${cityChoice}&locale=en-GB`;
+  const weatherQueryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityChoice}&appid=${apiKey}`;
 
-btnContainer.on('click', 'button', function () {
+  fetch(eventsQueryURL)
+    .then(response => response.json())
+    .then(data => {
+      $("#event").empty(); 
+      if (data._embedded && Array.isArray(data._embedded.events)) {
+        $("#event").append(generateEventCards(data._embedded.events));
+      } else {
+        $("#event").append("<p>No Events Found</p>");
+      }
+    })
+    .catch(error => console.error('Error:', error));
 
-    let CityChoice = $(this).text();
-    console.log(CityChoice);
-    const QueryURL3 = "https://api.openweathermap.org/data/2.5/forecast?q=" + CityChoice + "&appid=" + apiKey
-
-
-    const QueryURL2 = "https://cors-anywhere.herokuapp.com/https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=" + apiKey2 + "&city=" + CityChoice + "&locale=en-GB";
-
-
+    fetch(weatherQueryURL)
+    .then(response => response.json())
+    .then(data => {
+      // Get forecast data for the next 5 days at midday
+      const forecastDays = data.list.filter(forecast => 
+        forecast.dt_txt.includes("12:00:00") 
+      ).slice(0, 5); 
+  
+      const forecastContainer = $('#forecast');
+      forecastContainer.empty();
+      
+      forecastDays.forEach(day => {
+        const date = day.dt_txt.split(' ')[0];
+        const temperature = (day.main.temp - 273.15).toFixed(2);
+        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+        const weatherIcon = day.weather[0].icon;
     
-
-
-    fetch(QueryURL2)
-        .then(function (response) {
-
-            return response.json();
-        })
-        .then(function (data) {
-
-
-            console.log(JSON.stringify(data, null, 2));
-            console.log(data);
-            
-            
-            let Today = dayjs().format("DD/MM/YYYY");
-
-            let eventName1 = data._embedded.events[0].name;
-       let eventDate1 = data._embedded.events[0].dates.start.localDate;
-       let eventTime1 = data._embedded.events[0].dates.start.localTime;
-       let eventURL1 = data._embedded.events[0].url;
-       let eventPic1 = data._embedded.events[0].images[0].url;
-      
-       let eventNameL = $('.city-event-name');
-       let eventDateL = $('.city-event-date');
-       let eventTimeL = $('.city-event-time');
-       let eventurlL = $('.city-event-url');
-       let eventPicL = $('.event-pic');
-
-       eventNameL.text("Event: " + eventName1);
-       eventDateL.text("Date: " + eventDate1);
-       eventTimeL.text("Time: " + eventTime1);
-       eventurlL.attr("href", eventURL1 );
-       eventPicL.attr("src", eventPic1);
-
-
-
-            for (let i = 0; i < 6; i++) {
-
-            
-                //  $('.card-title-' + [i]).text(dayjs(weatherList2[i*7].dt_txt).format("DD/MM/YY"));
-                  $('.event-name-' + [i]).text("Event: " + data._embedded.events[i].name);
-                  $('.event-date-' + [i]).text("Date: " + data._embedded.events[i].dates.start.localDate);
-                  $('.event-time-' + [i]).text("Time: " + data._embedded.events[i].dates.start.localTime);
-                  $('.event-url-' + [i]).attr("href", data._embedded.events[i].url);
-                  $('.event-pic-' + [i]).attr("src", data._embedded.events[i].images[i].url);
-          
-              }
-
-            let CityContent1 = $('.weather-points-temp');
-            let CityContent2 = $('.weather-points-wind');
-            let CityContent3 = $('.weather-points-humidity');
-            let weatherPic = $('.weather-pic');
-
-
-            // .attr("src","second.jpg")
-
-            let CityTemp = data.list[0].main.temp - 273.15;
-            let CityWind = data.list[0].wind.speed;
-            let Humidity = data.list[0].main.humidity;
-            let WeatherDate = data.list[0].dt_txt;
-            let WeatherDateTrim = dayjs(WeatherDate).format("DD/MM/YYYY");
-            let weatherIcon = "https://openweathermap.org/img/w/" + data.list[0].weather[0].icon + ".png";
-            weatherPic.attr("src", weatherIcon);
-
-            CityContent1.text("Temp: " + Math.round(CityTemp * 100) / 100 + " °C");
-            CityContent2.text("Wind: " + CityWind + " KPH");
-            CityContent3.text("Humidity: " + Humidity + " %");
-
-            console.log(CityTemp);
-            console.log(CityWind);
-            console.log(Humidity);
-            console.log(WeatherDate);
-            console.log(WeatherDateTrim);
-
-            let weatherList = data.list;
-            //weatherList.concat(data.list);
-            let weatherList2 = Array.from(weatherList);
-            console.log(weatherList2);
-
-
-
-            let cityTitle = $('.city-name');
-            cityTitle.text(data.city.name + " (" + Today + ")");
-
-            // let cardTitles = $('car')
-
-            for (i = 0; i < weatherList2.length; i++) {
-
-                $('.card-title-' + [i]).text(dayjs(weatherList2[i * 7].dt_txt).format("DD/MM/YY"));
-                $('.temp-' + [i]).text("Temp: " + Math.round((weatherList2[i * 7].main.temp - 273.15) * 100) / 100 + "°C");
-                $('.wind-' + [i]).text("Wind: " + weatherList2[i * 7].wind.speed + " KPH");
-                $('.humidity-' + [i]).text("Humidity: " + weatherList2[i * 7].main.humidity + "%");
-                $('.weather-pic-' + [i]).attr("src", "https://openweathermap.org/img/w/" + weatherList2[i * 7].weather[0].icon + ".png")
-
-
-            }
-
-
-
-
-
-
-
-
-
-        })
-
-
-        fetch(QueryURL3)
-        .then(function (response) {
-
-            return response.json();
-        })
-        .then(function (data) {
-
-
-            //console.log(JSON.stringify(data, null, 2));
-           // console.log(data);
-           // console.log(weatherArray);
-            let Today = dayjs().format("DD/MM/YYYY");
-
-            let CityContent1 = $('.weather-points-temp');
-            let CityContent2 = $('.weather-points-wind');
-            let CityContent3 = $('.weather-points-humidity');
-            let weatherPic = $('.weather-pic');
-
-
-            // .attr("src","second.jpg")
-
-            
-
-            let CityTemp = data.list[0].main.temp - 273.15;
-            let CityWind = data.list[0].wind.speed;
-            let Humidity = data.list[0].main.humidity;
-            let WeatherDate = data.list[0].dt_txt;
-            let WeatherDateTrim = dayjs(WeatherDate).format("DD/MM/YYYY");
-            let weatherIcon = "https://openweathermap.org/img/w/" + data.list[0].weather[0].icon + ".png";
-            weatherPic.attr("src", weatherIcon);
-
-            CityContent1.text("Temp: " + Math.round(CityTemp * 100) / 100 + " °C");
-            CityContent2.text("Wind: " + CityWind + " KPH");
-            CityContent3.text("Humidity: " + Humidity + " %");
-
-            console.log(CityTemp);
-            console.log(CityWind);
-            console.log(Humidity);
-            console.log(WeatherDate);
-            console.log(WeatherDateTrim);
-
-            
-
-            let weatherList = data.list;
-            //weatherList.concat(data.list);
-            let weatherList2 = Array.from(weatherList);
-            console.log(weatherList2);
-
-
-
-            let cityTitle = $('.city-name');
-            cityTitle.text(data.city.name + " (" + Today + ")");
-
-            // let cardTitles = $('car')
-
-
-
-            for (let i = 0; i < weatherList2.length; i++) {
-
-            
-                   // $('.card-title-' + [i]).text(dayjs(weatherList2[i*7].dt_txt).format("DD/MM/YY"));
-                    $('.temp-' + [i]).text("Temp: " + Math.round((weatherList2[i*7].main.temp - 273.15) * 100) / 100 + "°C");
-                    $('.wind-' + [i]).text("Wind: " + weatherList2[i*7].wind.speed + " KPH");
-                    $('.humidity-' + [i]).text("Humidity: " + weatherList2[i*7].main.humidity + "%");
-                    $('.weather-pic-' + [i]).attr("src", "https://openweathermap.org/img/w/" + weatherList2[i].weather[0].icon + ".png");
-
-                }
-
-            }
-        )
-
-
-
-
-});
-
-
-JSON.parse(localStorage.getItem("City")) || [];
-
-//localStorage.clear();
-
-
-/*To do:
-
-1. When user searches for a city in the input, call weather API and show the result in HTML
-
-a- add event listener to form submit yup
-b)get the user input value (make it into variable(local storage) yup
-c) build query URL based on user input value yup
-d) call the API (inside event listener) and render the result in html yup
--get city name and show it in main weather forecast card yup
--get the first weather forecast item [0] and get the following values:
-.date
-.temperature
-.wind speed
-.humidity
-.icon
-yup
-
->render these values to the main card in html .attr()
-
-loop through weather array and and get the values again:
-.date
-.temperature
-.wind speed
-.humidity
-.icon
-
-
--render those values to the smaller card-
-yup
-
-
-
-2. When user searches for a city, store it in local storage.
-(add to an array, styringify and display. use pop/push/shift/unshift to keep them at 5)
-
-3. On initial page load, load the search history and show it as a list in HTML
-
-- build the API query URL based on the history stored in local storage
-call the API and render the result in the HTML
-
-
-4. When user clicks on the search history, Call weather API and show the 
-result in the HTML
-
-fetch.(QueryURL)
-
-ICON
-https://openweathermap.org/img/w/" + weather[0].icon + ".png"
-
-*/
+        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>'); 
+        forecastCard.html(`
+          <h6>${date}</h6>
+          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+          <p>${temperature}°C</p>
+          <p>${weatherDesc}</p>
+        `);
+    
+        forecastContainer.append(forecastCard);
+      });
+    })
+    .catch(error => console.error('Error:', error));
+  }); 
+  
+  renderButtons();
