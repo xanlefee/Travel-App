@@ -16,9 +16,9 @@ const renderButtons = function() {
 
     $("#buttons-view").append(btnCity);
   });
-}
+};
 
-// Function to capitalize first letter of a string (used for Weather descriptions)
+// Function to capitalize first letter of a string
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -36,7 +36,25 @@ function generateEventCards(events) {
       </div>`;
   }).join("");
   return eventHTML;
-}
+};
+
+// Function to create forecast cards using data fetched from the API
+function generateForecastCards(day) { 
+  const date = day.dt_txt.split(' ')[0];
+  const temperature = (day.main.temp - 273.15).toFixed(2);
+  const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+  const weatherIcon = day.weather[0].icon;
+
+  const forecastHTML = `
+    <div class="weather-card forecast-weather-card">
+      <h6>${date}</h6>
+      <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+      <p>${temperature}°C</p>
+      <p>${weatherDesc}</p>
+    </div>`;
+  
+  return forecastHTML;
+};
 
 // Event listener that triggers when the Search button is clicked
 $("#search-button").click(function(event) {
@@ -58,41 +76,30 @@ $("#search-button").click(function(event) {
     $("#search-input").val('');
   }
 
-  // Fetch event data from the API
+  // Fetch data from the API, and create cards for the event and the forecast
   fetch(eventsQueryURL)
     .then(response => response.json())
     .then(data => {
       $("#event").empty(); 
       if (data._embedded && Array.isArray(data._embedded.events)) {
-        $("#event").append(generateEventCards(data._embedded.events));
+        let eventHTML = generateEventCards(data._embedded.events);
+        $("#event").append(eventHTML);
       } else {
         $("#event").append("<p>No Events Found</p>");
       }
     })
     .catch(error => console.error('Error:', error));
 
-  // Fetch weather data from the API
   fetch(weatherQueryURL)
     .then(response => response.json())
     .then(data => {
-      const currentWeather = data.list[0];
-      const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
-      const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
-      const currentWindSpeed = currentWeather.wind.speed;
-      const currentHumidity = currentWeather.main.humidity;
-      const currentWeatherIcon = currentWeather.weather[0].icon;
-
-      const weatherHTML = `
-        <div class="weather-card current-weather">
-          <h3>Current Weather for ${city}</h3>
-          <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
-          <p>Temperature: ${currentTemperature}°C</p>
-          <p>Weather: ${currentWeatherDesc}</p>
-          <p>Wind Speed: ${currentWindSpeed} m/s</p>
-          <p>Humidity: ${currentHumidity}%</p>
-        </div>`;
-
-      $('#weather').empty().append(weatherHTML);
+      let weatherArray = data.list.filter(obj => obj.dt_txt.includes("12:00:00")).slice(0, 5);
+      // Empty the forecast container and generate forecast cards for each element in the array
+      $("#forecast").empty();
+      weatherArray.forEach(day => {
+        let forecastHTML = generateForecastCards(day);
+        $("#forecast").append(forecastHTML);
+      });
     })
     .catch(error => console.error('Error:', error));
 });
@@ -103,54 +110,40 @@ $("#clear-history").click(function(){
   $("#buttons-view").empty();
 });
 
-// Event listener that, when a city button is clicked, fetches and displays the weather and event data for that city
+// Event listener to fetch weather and events data when a city button is clicked
 $('#buttons-view').on('click', 'button', function () {
   const cityChoice = $(this).attr("data-name");
   
   const eventsQueryURL = `https://app.ticketmaster.com/discovery/v2/events.json?countryCode=GB&apikey=${apiKey2}&city=${cityChoice}&locale=en-GB`;
   const weatherQueryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityChoice}&appid=${apiKey}`;
 
+  // Fetch event data from the API and create cards
   fetch(eventsQueryURL)
     .then(response => response.json())
     .then(data => {
-      $("#event").empty(); 
+      $("#event").empty();
       if (data._embedded && Array.isArray(data._embedded.events)) {
-        $("#event").append(generateEventCards(data._embedded.events));
+        let eventHTML = generateEventCards(data._embedded.events);
+        $("#event").append(eventHTML);
       } else {
         $("#event").append("<p>No Events Found</p>");
       }
     })
     .catch(error => console.error('Error:', error));
 
-    fetch(weatherQueryURL)
+  // Fetch weather data from the API and create forecast cards
+  fetch(weatherQueryURL)
     .then(response => response.json())
     .then(data => {
-      // Get forecast data for the next 5 days at midday
-      const forecastDays = data.list.filter(forecast => 
-        forecast.dt_txt.includes("12:00:00") 
-      ).slice(0, 5); 
-  
-      const forecastContainer = $('#forecast');
-      forecastContainer.empty();
-      
-      forecastDays.forEach(day => {
-        const date = day.dt_txt.split(' ')[0];
-        const temperature = (day.main.temp - 273.15).toFixed(2);
-        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-        const weatherIcon = day.weather[0].icon;
-    
-        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>'); 
-        forecastCard.html(`
-          <h6>${date}</h6>
-          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
-          <p>${temperature}°C</p>
-          <p>${weatherDesc}</p>
-        `);
-    
-        forecastContainer.append(forecastCard);
+      let weatherArray = data.list.filter(obj => obj.dt_txt.includes("12:00:00")).slice(0, 5);
+      $("#forecast").empty();
+      weatherArray.forEach(day => {
+        let forecastHTML = generateForecastCards(day);
+        $("#forecast").append(forecastHTML);
       });
     })
     .catch(error => console.error('Error:', error));
-  }); 
-  
-  renderButtons();
+});
+
+// Call the renderButtons function to display buttons for already searched cities from local storage
+renderButtons();
