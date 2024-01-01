@@ -1,43 +1,75 @@
+* {
+    box-sizing: border-box;
+}
+
+:root{
+    --backgroundColor:#d9dad7;
+    --bodyTextColor: #083d56;
+    --search-button:#007bff;
+    --clearHistoryButton:#FFF7F0;
+    --eventTitle: 1.1 rem;
+    --cardSpacing: 2.8rem 4rem 0 ;
+    --eventLinkBg:#5e87b8;
+    --eventLinkColor:#000000;
+     
+}
+
 body {
     background-repeat: repeat;
     background-size: 99.99%;
-    color: blue;
+    background-color: var(--backgroundColor);
+    color: var(--bodyTextColor);
 }
 
-h1, h2, h5, h6 {
+h1,
+h2,
+h5,
+h6 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
 }
 
-.card {
-    border-color: rgb(36, 39, 216);
-    border-width: 3px;
-    text-align: left;
-    padding: 0px;
+/* main cards title */
+
+#event h3{
+    font-size: var(--eventTitle);
 }
 
-.card h3, .card p {
-    margin-left: 5px;
+/* weather block */
+
+#forecast {
+    display: flex;
+    margin-top: 1.20rem;
+    width: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+    background-image: url("../assets/images/bg-image.jpg");
+    background-size: cover;
 }
 
 .weather-card img {
     max-width: 50%;
     display: inline-block;
     align-items: center;
+
 }
 
-.button {
-    background-color: blue;
-    color: aliceblue;
+/* search and clear history button */
+
+#search-button {
+    background-color: var(--search-button);
+    color: rgb(247, 255, 240);
     border-radius: 5%;
-    display: list-item;
-    width: 100%;
+    width: 70%;
 }
 
 button#clear-history {
-    background-color: blue;
-    color: white;
-    margin-top: 5px;
-    border-radius: 5px;
+    background-color: grey;
+    color: var(--clearHistoryButton);
+    border-radius: 5%;
+    width: 39%;
+    margin-top: 10px;
 }
 
 .weather-search {
@@ -45,11 +77,71 @@ button#clear-history {
 }
 
 .input-group-append {
-    background-color: rgb(101, 105, 228);
-    width: 100%;
+    margin-top: 10px;
+    width: 50%;
     align-items: center;
 }
 
 .weather-header {
     background: radial-gradient(circle, rgb(255, 255, 255), rgb(0, 80, 210));
 }
+
+/* Event images and event cards */
+
+#event {
+    width: 100%;
+}
+
+#event a{
+    font-size: 1.3rem;
+    background-color:var(--eventLinkBg) ;
+    color: var(--eventLinkColor);
+    font-weight: bold;
+    font-style: oblique;
+}
+img {
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+}
+
+.card {
+    width: 40%;
+    height: auto;
+    float: left;
+    flex-wrap: nowrap;
+    text-align: center;
+    overflow: hidden;
+    margin: var(--cardSpacing);   
+}
+
+/* footer */
+
+.footer-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+
+/* media queries to size the pictures for small devices */
+
+@media only screen and (max-width: 600px) {
+
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    #event {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .card {
+        width: 85%;
+        height: auto;
+
+    }
+}
+

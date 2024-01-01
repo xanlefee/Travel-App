@@ -31,7 +31,7 @@ function generateEventCards(events) {
         <h3 class="event-name-${i}">${event.name}</h3>
         <p class="event-date-${i}">${event.dates.start.localDate}</p>
         <p class="event-time-${i}">${event.dates.start.localTime}</p>
-        <a class="event-url-${i}" href="${event.url}">Event Link</a>
+        <a class="event-url-${i}" href="${event.url}">Book Now</a>
         <img class="event-pic-${i}" src="${event.images[0]?.url}" alt="Event Image">
       </div>`;
   }).join("");
