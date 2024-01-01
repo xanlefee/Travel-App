@@ -8,7 +8,7 @@
     --search-button:#007bff;
     --clearHistoryButton:#FFF7F0;
     --eventTitle: 1.1 rem;
-    --cardSpacing: 2.8rem 4rem 0 ;
+    --cardSpacing: 2.8rem 3rem 0 ;
     --eventLinkBg:#5e87b8;
     --eventLinkColor:#000000;
      
@@ -99,15 +99,12 @@ button#clear-history {
     font-weight: bold;
     font-style: oblique;
 }
-img {
-    max-width: 600px;
-    height: auto;
-    object-fit: contain;
-}
+
+
 
 .card {
     width: 40%;
-    height: auto;
+    height: 500px;
     float: left;
     flex-wrap: nowrap;
     text-align: center;
@@ -115,15 +112,29 @@ img {
     margin: var(--cardSpacing);   
 }
 
+/* event pictures */
+
+#event img {
+    max-width: 100%;
+    height: 500px;
+    object-fit: cover;
+
+} *
+
 /* footer */
 
 .footer-container {
+    height:300px ;
+    width: 100%;
     margin-top: 2rem;
     display: flex;
     justify-content: center;
 }
 
-
+.footer-card{
+    width: 50%;
+    height: 200px;
+}
 /* media queries to size the pictures for small devices */
 
 @media only screen and (max-width: 600px) {
