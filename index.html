@@ -25,7 +25,7 @@
         <form id="search-form" class="form">
           <div class="form-inline form-group">
             <div class="input-group">
-              <input class="form-input weather-search" type="text" id="search-input" placeholder="London"
+              <input class="form-input weather-search" type="text" id="search-input" placeholder="City name"
                 aria-labelledby="form-heading" aria-controls="today forecast" />
               <div class="input-group-append">
                 <button type="submit" class="btn search-button" id="search-button" aria-label="submit search">
@@ -36,7 +36,12 @@
                 <hr class="hr weather-hr" />
                 
               </div>
-              <button id="clear-history">Clear History</button>
+
+              <button type="submit" class="btn search-button" id="clear-history" aria-label="submit search">
+                Clear search
+              </button>
+
+              
             </div>
           </div>
         </form>
@@ -62,9 +67,9 @@
 
 <!-- footer and modal element -->
 <br/>
-<footer class="container-fluid text-center footer.container">
+<footer class="container-fluid text-center footer-container">
 
-  <div class="card">
+  <div class="card footer-card">
     
     <div class="card-body">
       <h5 class="card-title">Subscribe to our newsletter</h5>
@@ -92,8 +97,10 @@
             <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="name@example.com" value="mailto@example.com">
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
             <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Sign me up</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            
           </div>
          </div>
         </form>
