@@ -48,6 +48,12 @@ h6 {
     background-size: cover;
 }
 
+.weather-card{
+    border-style: solid;
+    width: 200px;
+    background-color: #e6dedd;
+}
+
 .weather-card img {
     max-width: 50%;
     height: auto;
