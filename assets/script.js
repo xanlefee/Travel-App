@@ -31,7 +31,7 @@ function generateEventCards(events) {
         <h3 class="event-name-${i}">${event.name}</h3>
         <p class="event-date-${i}">${event.dates.start.localDate}</p>
         <p class="event-time-${i}">${event.dates.start.localTime}</p>
-        <a class="event-url-${i}" href="${event.url}">Book Now</a>
+        <a class="event-url-${i}" href="${event.url}">Event Link</a>
         <img class="event-pic-${i}" src="${event.images[0]?.url}" alt="Event Image">
       </div>`;
   }).join("");
@@ -75,26 +75,31 @@ $("#search-button").click(function(event) {
   fetch(weatherQueryURL)
     .then(response => response.json())
     .then(data => {
-      const currentWeather = data.list[0];
-      const currentTemperature = (currentWeather.main.temp - 273.15).toFixed(2);
-      const currentWeatherDesc = capitalizeFirstLetter(currentWeather.weather[0].description);
-      const currentWindSpeed = currentWeather.wind.speed;
-      const currentHumidity = currentWeather.main.humidity;
-      const currentWeatherIcon = currentWeather.weather[0].icon;
+      const forecastDays = data.list.filter(forecast => 
+        forecast.dt_txt.includes("12:00:00") 
+      ).slice(0, 5); 
+  
+      const forecastContainer = $('#forecast');
+      forecastContainer.empty();
+      
+      forecastDays.forEach(day => {
+        const date = day.dt_txt.split(' ')[0];
+        const temperature = (day.main.temp - 273.15).toFixed(2);
+        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+        const weatherIcon = day.weather[0].icon;
+    
+        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>'); 
+        forecastCard.html(`
+          <h6>${date}</h6>
+          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+          <p>${temperature}°C</p>
+          <p>${weatherDesc}</p>
+        `);
 
-      const weatherHTML = `
-        <div class="weather-card current-weather">
-          <h3>Current Weather for ${city}</h3>
-          <img src="https://openweathermap.org/img/wn/${currentWeatherIcon}.png" alt="${currentWeatherDesc}">
-          <p>Temperature: ${currentTemperature}°C</p>
-          <p>Weather: ${currentWeatherDesc}</p>
-          <p>Wind Speed: ${currentWindSpeed} m/s</p>
-          <p>Humidity: ${currentHumidity}%</p>
-        </div>`;
-
-      $('#weather').empty().append(weatherHTML);
+        forecastContainer.append(forecastCard);
     })
     .catch(error => console.error('Error:', error));
+});
 });
 
 // Event listener that clears the local storage and empty the button view when "Clear History" is clicked
@@ -123,34 +128,33 @@ $('#buttons-view').on('click', 'button', function () {
     .catch(error => console.error('Error:', error));
 
     fetch(weatherQueryURL)
-    .then(response => response.json())
-    .then(data => {
-      // Get forecast data for the next 5 days at midday
-      const forecastDays = data.list.filter(forecast => 
-        forecast.dt_txt.includes("12:00:00") 
-      ).slice(0, 5); 
+  .then(response => response.json())
+  .then(data => {
+    const forecastDays = data.list.filter(forecast => 
+      forecast.dt_txt.includes("12:00:00") 
+    ).slice(0, 5); 
+ 
+    const forecastContainer = $('#forecast');
+    forecastContainer.empty();
+    
+    forecastDays.forEach(day => {
+      const date = day.dt_txt.split(' ')[0];
+      const temperature = (day.main.temp - 273.15).toFixed(2);
+      const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+      const weatherIcon = day.weather[0].icon;
   
-      const forecastContainer = $('#forecast');
-      forecastContainer.empty();
-      
-      forecastDays.forEach(day => {
-        const date = day.dt_txt.split(' ')[0];
-        const temperature = (day.main.temp - 273.15).toFixed(2);
-        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-        const weatherIcon = day.weather[0].icon;
-    
-        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>'); 
-        forecastCard.html(`
-          <h6>${date}</h6>
-          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
-          <p>${temperature}°C</p>
-          <p>${weatherDesc}</p>
-        `);
-    
-        forecastContainer.append(forecastCard);
-      });
-    })
-    .catch(error => console.error('Error:', error));
+      const forecastCard = $('<div class="weather-card forecast-weather-card"></div>'); 
+      forecastCard.html(`
+        <h6>${date}</h6>
+        <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+        <p>${temperature}°C</p>
+        <p>${weatherDesc}</p>
+      `);
+  
+      forecastContainer.append(forecastCard);
+    });
+  })
+.catch(error => console.error('Error:', error));
   }); 
   
   renderButtons();
