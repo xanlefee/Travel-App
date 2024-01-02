@@ -144,7 +144,9 @@ button#clear-history {
 }
 /* media queries so pictures fit the content when re-sized*/
 
-
+.logoButton{
+    border-radius: 50%;
+}
 @media only screen and (max-width: 1000px) {
 
     img {
@@ -164,4 +166,5 @@ button#clear-history {
         height: 400px;
 
     }
+
 }
