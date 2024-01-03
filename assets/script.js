@@ -106,42 +106,45 @@ $("#search-button").click(function (event) {
   })
   .catch(error => console.error('Error:', error));
 
-  // Fetch weather data from the API
-  fetch(weatherQueryURL)
-    .then(response => response.json())
-    .then(data => {
-      const forecastDays = data.list.filter(forecast =>
-        forecast.dt_txt.includes("12:00:00")
-      ).slice(0, 5);
+// Fetch weather data from the API
+fetch(weatherQueryURL)
+  .then(response => response.json())
+  .then(data => {
+    const forecastDays = data.list.filter(forecast =>
+      forecast.dt_txt.includes("12:00:00")
+    ).slice(0, 5);
 
-      const forecastContainer = $('#forecastContainer');
-      const forecastCards5days = $('#forecast');
-     
-      forecastContainer.empty();
-      const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + capitalizeFirstLetter(city) +'</h2>')
-      forecastContainer.append(forecastContainerTitle)
-      forecastDays.forEach(day => {
-        
-        const date = day.dt_txt.split(' ')[0];
-        const temperature = (day.main.temp - 273.15).toFixed(2);
-        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-        const weatherIcon = day.weather[0].icon;
+    const forecastContainer = $('#forecastContainer');
+    const forecastCards5days = $('#forecast');
 
-        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>');
-        forecastCard.html(`
-          <h6>${formatDate(date)}</h6>
-          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
-          <p>${temperature}°C</p>
-          <p>${weatherDesc}</p>
-        `);
+    forecastContainer.empty();
+    forecastCards5days.empty(); // Clear previous forecast cards
 
+    const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + capitalizeFirstLetter(city) +'</h2>');
+    forecastContainer.append(forecastContainerTitle);
 
-        forecastCards5days.append(forecastCard);
-        forecastContainer.append(forecastCards5days);
-      })
-        .catch(error => console.error('Error:', error));
+    forecastDays.forEach(day => {
+      const date = day.dt_txt.split(' ')[0];
+      const temperature = (day.main.temp - 273.15).toFixed(2);
+      const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+      const weatherIcon = day.weather[0].icon;
+
+      const forecastCard = $('<div class="weather-card forecast-weather-card"></div>');
+      forecastCard.html(`
+        <h6>${formatDate(date)}</h6>
+        <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+        <p>${temperature}°C</p>
+        <p>${weatherDesc}</p>
+      `);
+
+      forecastCards5days.append(forecastCard);
     });
-});
+
+    forecastContainer.append(forecastCards5days);
+  })
+  .catch(error => console.error('Error:', error));
+    });
+
 
 // Event listener that clears the local storage and empty the button view when "Clear History" is clicked
 $("#clear-history").click(function () {
@@ -176,40 +179,43 @@ $('#buttons-view').on('click', 'button', function () {
   })
   .catch(error => console.error('Error:', error));
 
-    fetch(weatherQueryURL)
-    .then(response => response.json())
-    .then(data => {
-      const forecastDays = data.list.filter(forecast =>
-        forecast.dt_txt.includes("12:00:00")
-      ).slice(0, 5);
+  // Fetch weather data from the API
+fetch(weatherQueryURL)
+.then(response => response.json())
+.then(data => {
+  const forecastDays = data.list.filter(forecast =>
+    forecast.dt_txt.includes("12:00:00")
+  ).slice(0, 5);
 
-      const forecastContainer = $('#forecastContainer');
-      const forecastCards5days = $('#forecast');
-     
-      forecastContainer.empty();
-      const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + capitalizeFirstLetter(cityChoice) +'</h2>')
-      forecastContainer.append(forecastContainerTitle)
-      forecastDays.forEach(day => {
-        
-        const date = day.dt_txt.split(' ')[0];
-        const temperature = (day.main.temp - 273.15).toFixed(2);
-        const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
-        const weatherIcon = day.weather[0].icon;
+  const forecastContainer = $('#forecastContainer');
+  const forecastCards5days = $('#forecast');
 
-        const forecastCard = $('<div class="weather-card forecast-weather-card"></div>');
-        forecastCard.html(`
-          <h6>${formatDate(date)}</h6>
-          <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
-          <p>${temperature}°C</p>
-          <p>${weatherDesc}</p>
-        `);
+  forecastContainer.empty();
+  forecastCards5days.empty(); // Clear previous forecast cards
 
+  const forecastContainerTitle = $('<h2> Forecast for the next 5 days in ' + capitalizeFirstLetter(cityChoice) +'</h2>');
+  forecastContainer.append(forecastContainerTitle);
 
-        forecastCards5days.append(forecastCard);
-        forecastContainer.append(forecastCards5days);
-      })
-        .catch(error => console.error('Error:', error));
+  forecastDays.forEach(day => {
+    const date = day.dt_txt.split(' ')[0];
+    const temperature = (day.main.temp - 273.15).toFixed(2);
+    const weatherDesc = capitalizeFirstLetter(day.weather[0].description);
+    const weatherIcon = day.weather[0].icon;
+
+    const forecastCard = $('<div class="weather-card forecast-weather-card"></div>');
+    forecastCard.html(`
+      <h6>${formatDate(date)}</h6>
+      <img src="https://openweathermap.org/img/wn/${weatherIcon}.png" alt="${weatherDesc}">
+      <p>${temperature}°C</p>
+      <p>${weatherDesc}</p>
+    `);
+
+    forecastCards5days.append(forecastCard);
+  });
+
+  forecastContainer.append(forecastCards5days);
+})
+.catch(error => console.error('Error:', error));
     });
-});
 
 renderButtons();
