@@ -2,16 +2,16 @@
     box-sizing: border-box;
 }
 
-:root{
-    --backgroundColor:#ece371;
+:root {
+    --backgroundColor: #ece371;
     --bodyTextColor: #083d56;
-    --search-button:#007bff;
-    --clearHistoryButton:#FFF7F0;
+    --search-button: #007bff;
+    --clearHistoryButton: #FFF7F0;
     --eventTitle: 1.1 rem;
-    --cardSpacing: 2.8rem 3rem 0 ;
-    --eventLinkBg:#5e87b8;
-    --eventLinkColor:#000000;
-     
+    --cardSpacing: 2.8rem 3rem 0;
+    --eventLinkBg: #5e87b8;
+    --eventLinkColor: #000000;
+
 }
 
 body {
@@ -19,7 +19,7 @@ body {
     background-size: 99.99%;
     background-color: var(--backgroundColor);
     color: var(--bodyTextColor);
-    
+
 }
 
 h1,
@@ -32,7 +32,7 @@ h6 {
 
 /* main cards title */
 
-#event h3{
+#event h3 {
     font-size: var(--eventTitle);
 }
 
@@ -49,7 +49,7 @@ h6 {
     background-size: cover;
 }
 
-.weather-card{
+.weather-card {
     border-style: solid;
     width: 200px;
     background-color: #e6dedd;
@@ -100,9 +100,9 @@ button#clear-history {
     width: 100%;
 }
 
-#event a{
+#event a {
     font-size: 1.3rem;
-    background-color:var(--eventLinkBg) ;
+    background-color: var(--eventLinkBg);
     color: var(--eventLinkColor);
     font-weight: bold;
     font-style: oblique;
@@ -117,7 +117,7 @@ button#clear-history {
     flex-wrap: nowrap;
     text-align: center;
     overflow: hidden;
-    margin: var(--cardSpacing);   
+    margin: var(--cardSpacing);
 }
 
 /* event pictures */
@@ -127,36 +127,39 @@ button#clear-history {
     height: 500px;
     object-fit: cover;
 
-} *
+}
 
+*
 /* footer */
 
 .footer-container {
-    height:300px ;
+    height: 300px;
     width: 100%;
     margin-top: 2rem;
     display: flex;
     justify-content: center;
 }
 
-.footer-card{
+.footer-card {
     width: 50%;
     height: 200px;
 }
+
 /* media queries so pictures fit the content when re-sized*/
 
-.logoButton{
+.logoButton {
     border-radius: 50%;
     border: none;
     background: none;
 }
+
 @media only screen and (max-width: 1000px) {
 
     img {
         max-width: 100%;
         height: 100%;
         object-fit: scale-down;
-        
+
     }
 
     #event {
